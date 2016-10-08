@@ -1,0 +1,18 @@
+bareos:
+   build: .
+   links:
+    - mariadb
+   volumes:
+    - ./bareos-dir.conf:/etc/bareos/bareos-dir.conf 
+    - ./.my.cnf:/root/.my.cnf 
+   ports:
+    - 80:80
+mariadb:
+   image: mariadb:10
+   environment:
+      - MYSQL_ROOT_PASSWORD=mariadb
+      - MYSQL_DATABASE=bareos
+      - MYSQL_USER=bareos
+      - MYSQL_PASSWORD=bareos
+   
+   

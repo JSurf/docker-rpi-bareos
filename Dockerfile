@@ -1,10 +1,8 @@
-FROM jsurf/rpi-alpine
-RUN echo "@testing http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-RUN apk --no-cache add bareos@testing bareos-webui-apache2@testing supervisor
-
-EXPOSE 80
-RUN mkdir -p /run/apache2
-
+FROM alpine:3.4
+RUN apk add bareos bareos-webui bareos-webui-apache2 --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+RUN apk add supervisor mysql-client
+RUN mkdir /run/apache2
+RUN sed -i "s|#LoadModule rewrite_module modules/mod_rewrite.so|LoadModule rewrite_module modules/mod_rewrite.so|" /etc/apache2/httpd.conf
+ENV ZF2_PATH="/usr/share/php/zend/library/"
 COPY supervisord.conf /etc/supervisord.conf
 CMD ["/usr/bin/supervisord"]
- 
