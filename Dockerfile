@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:edge
 RUN apk add bareos bareos-webui bareos-webui-apache2 --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 RUN apk add supervisor mysql-client
 RUN mkdir /run/apache2
