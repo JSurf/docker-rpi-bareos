@@ -6,7 +6,7 @@ bareos:
     - ./bareos-dir.conf:/etc/bareos/bareos-dir.conf 
     - ./.my.cnf:/root/.my.cnf 
    ports:
-    - 80:80
+    - 8085:80
 mariadb:
    image: mariadb:10
    environment:
