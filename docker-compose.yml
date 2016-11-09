@@ -3,10 +3,12 @@ bareos:
    links:
     - mariadb
    volumes:
-#    - ./bareos-dir.conf:/etc/bareos/bareos-dir.conf 
     - ./.my.cnf:/root/.my.cnf 
    ports:
     - 8085:80
+    - 9101:9101
+    - 9102:9102
+    - 9103:9103  
 mariadb:
    image: mariadb:10
    environment:
