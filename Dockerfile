@@ -10,8 +10,9 @@ RUN echo bareos-database-common bareos-database-common/install-error select igno
 RUN echo bareos-database-common bareos-database-common/database-type select mysql | debconf-set-selections
 RUN echo bareos-database-common bareos-database-common/missing-db-package-error select ignore | debconf-set-selections
 RUN echo postfix postfix/main_mailer_type select No configuration | debconf-set-selections
-RUN apt-get -y -qq install bareos
-RUN apt-get -y -qq install bareos-database-mysql
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get -y -qq install bareos bareos-database-mysql bareos-webui 
+RUN apt-get -y install supervisor
 #RUN apk add bareos bareos-webui bareos-webui-apache2 --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 #RUN apk add supervisor mysql-client
 #RUN mkdir /run/apache2
