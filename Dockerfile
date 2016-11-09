@@ -18,4 +18,6 @@ RUN apt-get -y install mysql-client
 ADD supervisord.conf /etc/supervisord.conf
 ADD *.sh /
 RUN chmod 755 *.sh
+RUN cp /etc/bareos/bareos-dir.d/console/admin.conf.example /etc/bareos/bareos-dir.d/console/admin.conf
+ADD MyCatalog.conf /etc/bareos/bareos-dir.d/catalog/MyCatalog.conf
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
