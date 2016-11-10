@@ -9,6 +9,8 @@ bareos:
     - 9101:9101
     - 9102:9102
     - 9103:9103  
+   environment:
+      - BAREOS_SD_HOSTNAME=`hostname`
 mariadb:
    image: mariadb:10
    environment:
