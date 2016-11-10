@@ -1,8 +1,14 @@
 FROM debian:jessie
+#FROM jsurf/rpi-raspbian:latest
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV BAREOS_REPO_URL http://download.bareos.org/bareos/release/16.2/Debian_8.0/
+
+ENV BAREOS_REPO_URL "http://download.bareos.org/bareos/release/16.2/Debian_8.0/ /"
 ENV BAREOS_REPO_KEY http://download.bareos.org/bareos/release/16.2/Debian_8.0/Release.key
+#ENV BAREOS_REPO_URL "https://packagecloud.io/jsurf/raspbian/debian/ jessie main"
+#ENV BAREOS_REPO_KEY https://packagecloud.io/jsurf/raspbian/gpgkey
+
+#RUN [ "cross-build-start" ]
 
 # Install Apache
 RUN apt-get update && apt-get install -y apache2-bin apache2.2-common --no-install-recommends && rm -rf /var/lib/apt/lists/*
@@ -45,8 +51,8 @@ RUN set -ex \
 
 # Install bareos
 RUN apt-get update \ 
-    && apt-get -y install wget --no-install-recommends \
-    && echo deb $BAREOS_REPO_URL / > /etc/apt/sources.list.d/bareos.list \
+    && apt-get -y install wget apt-transport-https --no-install-recommends \
+    && echo deb $BAREOS_REPO_URL > /etc/apt/sources.list.d/bareos.list \
     && wget -q $BAREOS_REPO_KEY -O- | apt-key add - \
     && apt-get update \
     && echo bareos-database-common bareos-database-common/dbconfig-install boolean false | debconf-set-selections \
@@ -57,5 +63,9 @@ RUN apt-get update \
     && apt-get -y install bareos bareos-database-mysql bareos-webui supervisor mysql-client --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+# Install start scripts and configuration
 ADD rootfs/ /
+
+#RUN [ "cross-build-end" ]
+
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
