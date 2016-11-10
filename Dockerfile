@@ -1,14 +1,14 @@
-FROM debian:jessie
-#FROM jsurf/rpi-raspbian:latest
+#FROM debian:jessie
+FROM jsurf/rpi-raspbian:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV BAREOS_REPO_URL "http://download.bareos.org/bareos/release/16.2/Debian_8.0/ /"
-ENV BAREOS_REPO_KEY http://download.bareos.org/bareos/release/16.2/Debian_8.0/Release.key
-#ENV BAREOS_REPO_URL "https://packagecloud.io/jsurf/raspbian/debian/ jessie main"
-#ENV BAREOS_REPO_KEY https://packagecloud.io/jsurf/raspbian/gpgkey
+#ENV BAREOS_REPO_URL "http://download.bareos.org/bareos/release/16.2/Debian_8.0/ /"
+#ENV BAREOS_REPO_KEY http://download.bareos.org/bareos/release/16.2/Debian_8.0/Release.key
+ENV BAREOS_REPO_URL "https://packagecloud.io/jsurf/raspbian/debian/ jessie main"
+ENV BAREOS_REPO_KEY https://packagecloud.io/jsurf/raspbian/gpgkey
 
-#RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 
 # Install Apache
 RUN apt-get update && apt-get install -y apache2-bin apache2.2-common --no-install-recommends && rm -rf /var/lib/apt/lists/*
@@ -71,6 +71,6 @@ VOLUME /var/lib/bareos/storage
 
 EXPOSE 9101 9102 9103
 
-#RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]
 
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
