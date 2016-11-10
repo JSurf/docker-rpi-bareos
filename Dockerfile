@@ -1,6 +1,9 @@
 #FROM debian:jessie
 FROM jsurf/rpi-raspbian:latest
 
+ENV LANG C.UTF-8
+ENV TZ Europe/Berlin
+
 ENV DEBIAN_FRONTEND noninteractive
 
 #ENV BAREOS_REPO_URL "http://download.bareos.org/bareos/release/16.2/Debian_8.0/ /"
