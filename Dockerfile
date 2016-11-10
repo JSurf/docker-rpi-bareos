@@ -66,6 +66,11 @@ RUN apt-get update \
 # Install start scripts and configuration
 ADD rootfs/ /
 
+VOLUME /etc/bareos
+VOLUME /var/lib/bareos/storage
+
+EXPOSE 9101 9102 9103
+
 #RUN [ "cross-build-end" ]
 
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
