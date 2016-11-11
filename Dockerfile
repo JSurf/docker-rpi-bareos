@@ -10,44 +10,14 @@ ENV BAREOS_REPO_KEY http://download.bareos.org/bareos/release/16.2/Debian_8.0/Re
 
 #RUN [ "cross-build-start" ]
 
-# Install Apache
-RUN apt-get update && apt-get install -y apache2-bin apache2.2-common --no-install-recommends && rm -rf /var/lib/apt/lists/*
+# Install Nginx and PHP
+RUN apt-get update \
+    && apt-get install -y nginx php5 php5-fpm --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
 
-ENV APACHE_CONFDIR /etc/apache2
-ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
-
-RUN set -ex \
-	\
-# generically convert lines like
-#   export APACHE_RUN_USER=www-data
-# into
-#   : ${APACHE_RUN_USER:=www-data}
-#   export APACHE_RUN_USER
-# so that they can be overridden at runtime ("-e APACHE_RUN_USER=...")
-	&& sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS" \
-	\
-# setup directories and permissions
-	&& . "$APACHE_ENVVARS" \
-	&& for dir in \
-		"$APACHE_LOCK_DIR" \
-		"$APACHE_RUN_DIR" \
-		"$APACHE_LOG_DIR" \
-		/var/www/html \
-	; do \
-		rm -rvf "$dir" \
-		&& mkdir -p "$dir" \
-		&& chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$dir"; \
-	done
-
-# Apache + PHP requires preforking Apache for best results
-RUN a2dismod mpm_event && a2enmod mpm_prefork
-
-# logs should go to stdout / stderr
-RUN set -ex \
-	&& . "$APACHE_ENVVARS" \
-	&& ln -sfT /dev/stderr "$APACHE_LOG_DIR/error.log" \
-	&& ln -sfT /dev/stdout "$APACHE_LOG_DIR/access.log" \
-	&& ln -sfT /dev/stdout "$APACHE_LOG_DIR/other_vhosts_access.log"
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Install bareos
 RUN apt-get update \ 
@@ -65,11 +35,11 @@ RUN apt-get update \
 
 # Install start scripts and configuration
 ADD rootfs/ /
-
-VOLUME /etc/bareos
+RUN chmod 755 *.sh
+#VOLUME /etc/bareos
 VOLUME /var/lib/bareos/storage
 
-EXPOSE 9101 9102 9103
+EXPOSE 9100 9101 9102 9103
 
 #RUN [ "cross-build-end" ]
 
